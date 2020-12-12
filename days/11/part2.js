@@ -11,31 +11,29 @@ var map = data.map((row, y) =>  [...row].map((icon, x) => {
 }, [])
 
 map.forEach(tile => {
-    tile.neighbors = map.filter(e => Math.abs(tile.x - e.x) <= 1 && Math.abs(tile.y - e.y) <= 1 && e != tile); 
+    tile.neighbors = [
+        {x: 0, y: 1},
+        {x: 0, y: -1},
+        {x: 1, y: 1},
+        {x: 1, y: -1},
+        {x: -1, y: 1},
+        {x: -1, y: -1},
+        {x: 1, y: 0},
+        {x: -1, y: 0},
+        
+    ].map(e => {
+        var found = {icon: '.'};
+        var count = 1;
+        while(found && found.icon == '.'){
+            found = map.find(f => f.x === e.x * count + tile.x && f.y === e.y * count + tile.y);
+            count++;
+        }
+        return found;
+    }).filter(e => e && e.icon);
 });
 
 function simulate(map){
     map.forEach((tile, index) => {
-        tile.neighbors = [
-            {x: 0, y: 1},
-            {x: 0, y: -1},
-            {x: 1, y: 1},
-            {x: 1, y: -1},
-            {x: -1, y: 1},
-            {x: -1, y: -1},
-            {x: 1, y: 0},
-            {x: -1, y: 0},
-            
-        ].map(e => {
-            var found = {icon: '.'};
-            var count = 1;
-            while(found && found.icon == '.'){
-                found = map.find(f => f.x === e.x * count + tile.x && f.y === e.y * count + tile.y);
-                count++;
-            }
-            return found;
-        }).filter(e => e && e.icon);
-
         if(tile.icon === 'L'){
             tile.newIcon = tile.neighbors.filter(e => e.icon === '#').length === 0 ? '#' : 'L';
         }
